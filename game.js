@@ -2,7 +2,7 @@ class Game {
   constructor(canvas, playerNumber, scoreChart) {
     this.canvas = canvas;
     this.ctx = this.canvas.getContext('2d');
-    this.lvlNum = 10;
+    this.lvlNum = 0;
     this.colors = ["red", "purple", "blue", "yellow"];
     this.gameOnGoing = false;
     this.playerNumber = playerNumber;
