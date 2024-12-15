@@ -114,7 +114,7 @@ class Game {
 
           if (this.isPushedIntoWall(player[0], player[1], playerSize)) {
             console.log("Pushed to wall")
-            this.respawnPlayer(index); // Respawn player to start position
+            this.respawnPlayer(index);
             return;
           }
         }
@@ -179,18 +179,16 @@ class Game {
 
     for (let i = 0; i < this.curLevel.dyn_obst_cur_pos.length; i++) {
       const currentPos = this.curLevel.dyn_obst_cur_pos[i];
-      const direction = this.curLevel.dyn_obst[i][2]; // Movement direction ("h", "v", etc.)
-      const speed = 1.5; // Assuming dynamic obstacles move at a constant speed of 1 unit per frame
+      const direction = this.curLevel.dyn_obst[i][2];
+      const speed = 1.5;
 
       if (x < currentPos[0] + currentPos[2] && x + width > currentPos[0] &&
         y < currentPos[1] + currentPos[3] && y + height > currentPos[1]) {
 
-        // Determine push vector based on movement direction and position
         let dx = 0, dy = 0;
         let shouldPush = false;
         let preventCrossing = false;
 
-        // Check if the object is moving towards the obstacle
         if (direction === "h") {
           if (x > currentPos[0]) {
             dx = speed;
@@ -283,7 +281,6 @@ class Game {
     let collisionLeft = false;
     let collisionRight = false;
 
-    // Check collision with static obstacles
     for (let obstacle of this.curLevel.obst) {
       if (
         x < obstacle[0] + obstacle[2] && x + size > obstacle[0] &&
@@ -296,7 +293,6 @@ class Game {
       }
     }
 
-    // Check collision with dynamic obstacles
     for (let currentPos of this.curLevel.dyn_obst_cur_pos) {
       if (
         x < currentPos[0] + currentPos[2] && x + size > currentPos[0] &&
@@ -309,7 +305,6 @@ class Game {
       }
     }
 
-    // Check collision with map edges
     if (x <= 0) collisionLeft = true;
     if (x >= this.canvas.width - size) collisionRight = true;
     if (y <= 0) collisionTop = true;
@@ -327,8 +322,6 @@ class Game {
 
     console.log(`Player ${playerIndex + 1} respawned at starting position. ${startPos}`);
   }
-
-
 
   activateBoost(playerIndex) {
     this.playerBoosts[playerIndex] = Date.now() + 3000;
@@ -369,7 +362,6 @@ class Game {
 
     this.drawDynObst();
 
-    // Draw finish line
     this.ctx.fillStyle = "lightblue";
     this.curLevel.fin.forEach(fin => {
       this.ctx.beginPath();
@@ -403,10 +395,8 @@ class Game {
       const [startPos, endPos, direction] = obstacle;
       const currentPos = this.curLevel.dyn_obst_cur_pos[index];
 
-      // Draw the obstacle
       this.ctx.fillRect(...currentPos);
 
-      // Move the obstacle
       if (this.gameOnGoing) {
         if (direction === "h" || direction === "h-reverse") {
           currentPos[0] += direction === "h" ? 1.5 : -1.5;
@@ -417,13 +407,11 @@ class Game {
         } else if (direction === "v" || direction === "v-reverse") {
           currentPos[1] += direction === "v" ? 1.5 : -1.5;
           if (currentPos[1] <= Math.min(startPos[1], endPos[1]) || currentPos[1] >= Math.max(startPos[1], endPos[1])) {
-            // Reverse direction when reaching top or bottom
             obstacle[2] = direction === "v" ? "v-reverse" : "v";
           }
         }
       }
 
-      // Update the current position in the array
       this.curLevel.dyn_obst_cur_pos[index] = currentPos;
     });
   }
@@ -436,11 +424,9 @@ class Game {
     this.gameOnGoing = false;
     this.audio_manager.playLevelFinished();
 
-    // Background
     this.ctx.fillStyle = "darkgreen";
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-    // Outer box (black border)
     const boxWidth = 650;
     const boxHeight = 150;
     const boxX = (this.canvas.width - boxWidth) / 2;
@@ -448,11 +434,9 @@ class Game {
     this.ctx.fillStyle = 'black';
     this.ctx.fillRect(boxX, boxY, boxWidth, boxHeight);
 
-    // Middle box (dark grey)
     this.ctx.fillStyle = 'darkgrey';
     this.ctx.fillRect(boxX + 5, boxY + 5, boxWidth - 10, boxHeight - 10);
 
-    // Add "Level finished" text
     this.ctx.fillStyle = "black";
     this.ctx.font = "bold 32px Arial";
     this.ctx.textAlign = "center";
@@ -460,21 +444,17 @@ class Game {
 
     this.ctx.font = "20px Arial";
 
-    // Create "Next level" button
     const buttonWidth = 150;
     const buttonHeight = 50;
     const buttonX = (this.canvas.width - buttonWidth) / 2;
     const buttonY = boxY + boxHeight - buttonHeight - 15;
 
-    // Button outer border (black)
     this.ctx.fillStyle = "black";
     this.ctx.fillRect(buttonX - 150, buttonY, buttonWidth, buttonHeight);
 
-    // Button inner part (dark grey)
     this.ctx.fillStyle = "darkgrey";
     this.ctx.fillRect(buttonX + 2 - 150, buttonY + 2, buttonWidth - 4, buttonHeight - 4);
 
-    // Add button text
     this.ctx.fillStyle = "white";
     this.ctx.font = "24px Arial";
     this.ctx.fillText("Next level", this.canvas.width / 2 - 150, buttonY + 27);
@@ -489,25 +469,23 @@ class Game {
     this.drawPlayers()
     this.updateScoreChart(this.colors.slice(0, this.playerNumber), this.playerPoints)
 
-    // Add click event listener for the button
     this.canvas.addEventListener("click", this.handleNextLevelListener);
   }
 
   updateScoreChart(labels, data) {
-    this.scoreChart.data.labels = labels; // Update labels
+    this.scoreChart.data.labels = labels;
     this.scoreChart.data.datasets = [{
       label: 'Scores',
       data: data,
       backgroundColor: labels
     }];
 
-    this.scoreChart.update(); // Redraw the chart with new data
+    this.scoreChart.update();
 
-    // Dynamically adjust the y-axis maximum value
-    const maxValue = Math.max(...data); // Find the highest value in the data array
-    this.scoreChart.options.scales.y.suggestedMax = maxValue + 3; // Set max to one higher than the highest value
+    const maxValue = Math.max(...data);
+    this.scoreChart.options.scales.y.suggestedMax = maxValue + 3;
 
-    this.scoreChart.update(); // Redraw the chart with updated options and data
+    this.scoreChart.update();
   }
 
   async startNextLevel() {
@@ -515,11 +493,9 @@ class Game {
     this.lvlNum++;
     console.log("Current map: " + this.lvlNum);
 
-    // Clear canvas
     this.ctx.fillStyle = "lightgray";
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-    // Fetch level data
     this.curLevel = {start_positions: [], obst: [], dyn_obst: [], dyn_obst_cur_pos: [], booster: [], debuff: [], fin: [], finPos: []};
     this.finOrder = new Set();
     this.players = [];
@@ -530,7 +506,6 @@ class Game {
 
       const data = await response.json();
 
-      // Set up level data
       this.curLevel.obst = data["obstacles"];
       this.curLevel.fin = data["finish_line"];
       this.curLevel.finPos = data["finish_positions"].map(position => [...position, this.playerSize, this.playerSize]);
@@ -552,13 +527,11 @@ class Game {
         this.curLevel.debuff = data["debuff"];
       }
 
-      // Start countdown before starting the game
       this.drawCurLvl();
       this.drawPlayers();
       this.drawDynObst()
       await this.startCountdown();
 
-      // Start game logic after countdown
       this.audio_manager.playGameLoop();
       this.gameOnGoing = true;
       this.animate();
@@ -580,12 +553,12 @@ class Game {
     this.ctx.textAlign = "center";
     this.ctx.textBaseline = "middle";
     this.ctx.fillText(countdown, this.canvas.width / 2, this.canvas.height / 2);
-    this.ctx.globalAlpha = 1.0; // Reset opacity
+    this.ctx.globalAlpha = 1.0;
   }
 
   async startCountdown() {
     return new Promise((resolve) => {
-      let countdown = 5; // Start from 5 seconds
+      let countdown = 5;
 
       this.countdownScreen(countdown);
       countdown--;
@@ -597,8 +570,8 @@ class Game {
 
         if (countdown < 0) {
           this.audio_manager.playGameStart();
-          clearInterval(intervalId); // Stop countdown
-          resolve(); // Resolve promise to continue game logic
+          clearInterval(intervalId);
+          resolve();
         } else {
           this.audio_manager.playCountdown();
         }
@@ -608,11 +581,9 @@ class Game {
 
   endOfGame() {
     this.audio_manager.playGameOver();
-    // Background
     this.ctx.fillStyle = "darkgreen";
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-    // Outer box (black border)
     const boxWidth = 650;
     const boxHeight = 150;
     const boxX = (this.canvas.width - boxWidth) / 2;
@@ -620,11 +591,9 @@ class Game {
     this.ctx.fillStyle = 'black';
     this.ctx.fillRect(boxX, boxY, boxWidth, boxHeight);
 
-    // Middle box (dark grey)
     this.ctx.fillStyle = 'darkgrey';
     this.ctx.fillRect(boxX + 5, boxY + 5, boxWidth - 10, boxHeight - 10);
 
-    // Add "Level finished" text
     this.ctx.fillStyle = "black";
     this.ctx.font = "bold 32px Arial";
     this.ctx.textAlign = "center";
@@ -632,21 +601,17 @@ class Game {
 
     this.ctx.font = "20px Arial";
 
-    // Create "Next level" button
     const buttonWidth = 150;
     const buttonHeight = 50;
     const buttonX = (this.canvas.width - buttonWidth) / 2;
     const buttonY = boxY + boxHeight - buttonHeight - 15;
 
-    // Button outer border (black)
     this.ctx.fillStyle = "black";
     this.ctx.fillRect(buttonX - 150, buttonY, buttonWidth, buttonHeight);
 
-    // Button inner part (dark grey)
     this.ctx.fillStyle = "darkgrey";
     this.ctx.fillRect(buttonX + 2 - 150, buttonY + 2, buttonWidth - 4, buttonHeight - 4);
 
-    // Add button text
     this.ctx.fillStyle = "white";
     this.ctx.font = "24px Arial";
     this.ctx.fillText("Play again", this.canvas.width / 2 - 150, buttonY + 27);

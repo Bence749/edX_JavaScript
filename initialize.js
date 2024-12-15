@@ -71,55 +71,53 @@ function initializeChart() {
     type: 'bar',
     options: {
       responsive: true,
-      maintainAspectRatio: false, // Allows better control of chart size
+      maintainAspectRatio: false,
       plugins: {
         legend: {
-          display: false // Hide legend
+          display: false
         },
         tooltip: {
-          enabled: false // Disable tooltips
+          enabled: false
         },
         datalabels: {
-          anchor: 'end', // Position label at the end of the bar
-          align: 'top', // Align label to the top of the bar
-          offset: 4, // Add space between the bar and the label
-          clamp: true, // Ensure labels stay within chart bounds
+          anchor: 'end',
+          align: 'top',
+          offset: 4,
+          clamp: true,
           formatter: function (value) {
-            return value; // Display the value on top of the bar
+            return value;
           },
           font: {
-            weight: 'bold' // Make labels bold for better visibility
+            weight: 'bold'
           }
         }
       },
       scales: {
         x: {
-          display: false // Hide x-axis
+          display: false
         },
         y: {
-          display: false, // Hide y-axis
-          beginAtZero: true, // Ensure bars start from zero
-          suggestedMax: null // Placeholder for dynamic max value adjustment
+          display: false,
+          beginAtZero: true,
+          suggestedMax: null
         }
       }
     },
-    plugins: [ChartDataLabels] // Include Chart.js Data Labels plugin
+    plugins: [ChartDataLabels]
   });
 
-  // Draw the initial waiting message directly on the chart canvas
   drawWaitingMessage();
 }
 
 function drawWaitingMessage() {
   const { left, right, top, bottom } = chartCtx.canvas.getBoundingClientRect();
 
-  chartCtx.clearRect(0, 0, chartCtx.canvas.width, chartCtx.canvas.height); // Clear previous drawings
+  chartCtx.clearRect(0, 0, chartCtx.canvas.width, chartCtx.canvas.height);
 
-  // Set styles for the message
-  chartCtx.fillStyle = 'darkgreen'; // Background color
-  chartCtx.fillRect(0, 0, chartCtx.canvas.width, chartCtx.canvas.height); // Draw background rectangle
+  chartCtx.fillStyle = 'darkgreen';
+  chartCtx.fillRect(0, 0, chartCtx.canvas.width, chartCtx.canvas.height);
 
-  chartCtx.fillStyle = 'white'; // Text color
+  chartCtx.fillStyle = 'white';
   chartCtx.textAlign = 'center';
   chartCtx.textBaseline = 'middle';
   chartCtx.font = '20px Arial';
